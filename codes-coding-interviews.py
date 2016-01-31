@@ -9,6 +9,13 @@ Change Activity: cotyb establish this file in 1/31 2016
 #coding=utf-8
 
 import time
+import Queue
+
+class ListNode():
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
 
 class Codes():
     def __init__(self):
@@ -48,8 +55,20 @@ class Codes():
         if len1 == 0:
             num1[:len2] = num2[:len2]
 
-        print num1
-
+    def reversed_print_linked(self, head):
+        '''
+        print the linked list with reversed order
+        :param head: Listnode, the head of the linked list
+        :return: the reversed list of value
+        '''
+        stack = Queue.LifoQueue()
+        if not head:
+            return
+        while head:
+            stack.put(head.val)
+            head = head.next
+        while not stack.empty():
+            print stack.get()
 
 
 if __name__ == "__main__":
@@ -57,4 +76,10 @@ if __name__ == "__main__":
     st = time.time()
     #print codes.four_replace_space("we are happy")
     #codes.A1_insert2_A2([2,5,7,8,0,0,0,0,0,0],[1,3,4,23,56])
+    a = ListNode(1)
+    b = ListNode(2)
+    c = ListNode(3)
+    a.next = b
+    b.next = c
+    codes.reversed_print_linked(a)
     print time.time() - st
