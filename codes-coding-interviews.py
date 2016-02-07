@@ -17,6 +17,13 @@ class ListNode():
         self.next = None
 
 
+class BinaryTreeNode():
+    def __init__(self, x):
+        self.val = x
+        self.left = None
+        self.right = None
+
+
 class Codes():
     def __init__(self):
         self.__author__ = "cotyb"
@@ -70,6 +77,46 @@ class Codes():
         while not stack.empty():
             print stack.get()
 
+    def reversed_link_recursion(self, head):
+        '''
+        reverse the linked list with recursion
+        :param head: the head of the linked list
+        :return: noting
+        '''
+        if not head:
+            return
+        else:
+            self.reversed_link_recursion(head.next)
+            print head.val
+
+    def reconstruct_binary_tree(self, prelist, inlist):
+        '''
+        given the pre-order traversal list and in-order traversal list, construct the binary tree
+        :param prelist: the result list of pre-order traversal
+        :param inlist:  the result list of in-order traversal
+        :return: binary tree
+        '''
+        if not prelist or not inlist:
+            return None
+        if len(prelist) != len(inlist):
+            print "your input is error"
+            return
+        if len(prelist) == 1:
+            root = BinaryTreeNode(prelist[0])
+            return root
+        root = BinaryTreeNode(prelist[0])
+        index_root_inlist = inlist.index(prelist[0])
+        inlist_left = inlist[:index_root_inlist]
+        inlist_right = inlist[index_root_inlist+1:]
+        left_len, right_len = len(inlist_left), len(inlist_right)
+        prelist_left = prelist[1:left_len+1]
+        prelist_right = prelist[right_len:]
+        root.left = self.reconstruct_binary_tree(prelist_left, inlist_left)
+        root.right = self.reconstruct_binary_tree(prelist_right, inlist_right)
+        return root
+
+
+
 
 if __name__ == "__main__":
     codes = Codes()
@@ -81,5 +128,10 @@ if __name__ == "__main__":
     c = ListNode(3)
     a.next = b
     b.next = c
-    codes.reversed_print_linked(a)
+    #codes.reversed_print_linked(a)
+    #codes.reversed_link_recursion(a)
+    root = codes.reconstruct_binary_tree([1,2,4,7,3,5,6,8],[4,7,2,1,5,3,8,6])
+    print root.left.left.right.val
+
+
     print time.time() - st
