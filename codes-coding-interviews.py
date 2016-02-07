@@ -116,6 +116,48 @@ class Codes():
         return root
 
 
+class Queue_With_Two_Stacks():
+    '''
+    implement queue with two stacks
+    '''
+
+    def __init__(self):
+        self.stackin = Queue.LifoQueue()
+        self.stackout = Queue.LifoQueue()
+
+    def appendTail(self, num):
+        '''
+        insert the num into the end of the queue
+        :param num: int, the element to insert
+        :return: noting
+        '''
+        if self.stackin.full() and self.stackout.full():
+            print "the queue is full"
+            return
+        if not self.stackin.full():
+            self.stackin.put(num)
+            return
+        while not self.stackin.empty():
+            self.stackout.put(self.stackin.get())
+        self.stackin.put(num)
+
+
+    def deleteHead(self):
+        '''
+        delete the element in the head of the queue
+        :return: noting
+        '''
+        if self.stackin.empty() and self.stackout.empty():
+            print "the queue is empty"
+            return
+        if not self.stackout.empty():
+            self.stackout.get()
+            return
+        while not self.stackin.empty():
+            self.stackout.put(self.stackin.get())
+        self.stackout.get()
+
+
 
 
 if __name__ == "__main__":
@@ -130,8 +172,18 @@ if __name__ == "__main__":
     b.next = c
     #codes.reversed_print_linked(a)
     #codes.reversed_link_recursion(a)
-    root = codes.reconstruct_binary_tree([1,2,4,7,3,5,6,8],[4,7,2,1,5,3,8,6])
-    print root.left.left.right.val
+    #root = codes.reconstruct_binary_tree([1,2,4,7,3,5,6,8],[4,7,2,1,5,3,8,6])
+    #print root.left.left.right.val
+    queue = Queue_With_Two_Stacks()
+    for ele in range(10):
+        print ele
+        queue.appendTail(ele)
+    print "hh"
+    for i in range(10):
+        print queue.deleteHead()
+
+
+
 
 
     print time.time() - st
