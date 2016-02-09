@@ -115,6 +115,49 @@ class Codes():
         root.right = self.reconstruct_binary_tree(prelist_right, inlist_right)
         return root
 
+    def age_sort(self, age_list):
+        '''
+        sort the age of employees of a company
+        suppose the age range from 0 to 100
+        :param age_list: a list of age num
+        :return: sorted list
+        '''
+        age_count = {}
+        result = []
+        if None == age_list:
+            return
+        for age in age_list:
+            if age < 0 or age > 100:
+                print "%s the age is out of bound" %age
+                continue
+            age_count[age] = age_count.get(age, 0) + 1
+
+        for age in range(0, 101):
+            result += age_count.get(age, 0) * [age]
+
+        return result
+
+    def find_min_of_rotated_list(self, rotated_list):
+        if [] == rotated_list:
+            return
+        #start, end = 0, len(rotated_list) - 1
+        return self.partition(rotated_list)
+
+    def partition(self, rotated_list):
+        start, end = 0, len(rotated_list) - 1
+        if rotated_list[-1] > rotated_list[0]:
+            return rotated_list[0]
+        if len(rotated_list) == 1:
+            return rotated_list[0]
+        mid = (start + end) / 2
+        if rotated_list[mid] >= rotated_list[start]:
+            return self.partition(rotated_list[mid+1:])
+        else:
+            return self.partition(rotated_list[:mid+1])
+
+
+
+
 
 class Queue_With_Two_Stacks():
     '''
@@ -174,6 +217,7 @@ if __name__ == "__main__":
     #codes.reversed_link_recursion(a)
     #root = codes.reconstruct_binary_tree([1,2,4,7,3,5,6,8],[4,7,2,1,5,3,8,6])
     #print root.left.left.right.val
+    '''
     queue = Queue_With_Two_Stacks()
     for ele in range(10):
         print ele
@@ -181,6 +225,16 @@ if __name__ == "__main__":
     print "hh"
     for i in range(10):
         print queue.deleteHead()
+    print codes.age_sort([232,4,3,54,765,42,-1,43,53,34,34,34,43,243,321,24,65,768,98,34,87,34,2,389,7])
+    '''
+    for i in range(10):
+        list = [num for num in range(i)]
+        for j in range(i):
+            list = list[j:] + list[:j]
+            print list
+            print codes.find_min_of_rotated_list(list)
+
+
 
 
 
