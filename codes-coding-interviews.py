@@ -11,6 +11,49 @@ Change Activity: cotyb establish this file in 1/31 2016
 import time
 import Queue
 
+
+class Queue_With_Two_Stacks():
+    '''
+    implement queue with two stacks
+    '''
+
+    def __init__(self):
+        self.stackin = Queue.LifoQueue()
+        self.stackout = Queue.LifoQueue()
+
+    def appendTail(self, num):
+        '''
+        insert the num into the end of the queue
+        :param num: int, the element to insert
+        :return: noting
+        '''
+        if self.stackin.full() and self.stackout.full():
+            print "the queue is full"
+            return
+        if not self.stackin.full():
+            self.stackin.put(num)
+            return
+        while not self.stackin.empty():
+            self.stackout.put(self.stackin.get())
+        self.stackin.put(num)
+
+
+    def deleteHead(self):
+        '''
+        delete the element in the head of the queue
+        :return: noting
+        '''
+        if self.stackin.empty() and self.stackout.empty():
+            print "the queue is empty"
+            return
+        if not self.stackout.empty():
+            self.stackout.get()
+            return
+        while not self.stackin.empty():
+            self.stackout.put(self.stackin.get())
+        self.stackout.get()
+
+
 class ListNode():
     def __init__(self, x):
         self.val = x
@@ -138,6 +181,11 @@ class Codes():
         return result
 
     def find_min_of_rotated_list(self, rotated_list):
+        '''
+        p66, implement this question with recursive
+        :param rotated_list: a rotated list
+        :return: the min num
+        '''
         if [] == rotated_list:
             return
         #start, end = 0, len(rotated_list) - 1
@@ -150,55 +198,105 @@ class Codes():
         if len(rotated_list) == 1:
             return rotated_list[0]
         mid = (start + end) / 2
-        if rotated_list[mid] >= rotated_list[start]:
+        if rotated_list[mid] == rotated_list[start] and rotated_list[start] == rotated_list[end]:
+            return self.find_min_in_order(rotated_list)
+        elif rotated_list[mid] >= rotated_list[start]:
             return self.partition(rotated_list[mid+1:])
         else:
             return self.partition(rotated_list[:mid+1])
 
-
-
-
-
-class Queue_With_Two_Stacks():
-    '''
-    implement queue with two stacks
-    '''
-
-    def __init__(self):
-        self.stackin = Queue.LifoQueue()
-        self.stackout = Queue.LifoQueue()
-
-    def appendTail(self, num):
+    def find_min_rotated_list_loop(self, rotated_list):
         '''
-        insert the num into the end of the queue
-        :param num: int, the element to insert
-        :return: noting
+        p66 implement this question with loop
+        :param rotated_list: a rotated list
+        :return: the min num
         '''
-        if self.stackin.full() and self.stackout.full():
-            print "the queue is full"
+        if [] == rotated_list:
             return
-        if not self.stackin.full():
-            self.stackin.put(num)
+        end = len(rotated_list) - 1
+        start = 0
+        mid = start
+        while rotated_list[start] >= rotated_list[end]:
+            if end - start == 1:
+                mid = end
+                break
+            mid = (start + end) / 2
+            if rotated_list[mid] == rotated_list[start] and rotated_list[start] == rotated_list[end]:
+                return self.find_min_in_order(rotated_list[start:end+1])
+            elif rotated_list[mid] >= rotated_list[start]:
+                start = mid
+            else:
+                end = mid
+        return rotated_list[mid]
+
+    def find_min_in_order(self, rotated_list):
+        '''
+        :param rotated_list: a list that
+        :return: the min num
+        '''
+        result = rotated_list[0]
+        for ele in rotated_list:
+            if ele < result:
+                result = ele
+        return result
+
+    def fibonacci_recursive(self, n):
+        '''
+        print the nth fibonacci num with recursive
+        :param n: the nth number
+        :return: the num
+        '''
+        if n < 0:
+            print "your input is error"
             return
-        while not self.stackin.empty():
-            self.stackout.put(self.stackin.get())
-        self.stackin.put(num)
+        elif n == 0:
+            return 0
+        elif n == 1:
+            return 1
+        return self.fibonacci_recursive(n-1) + self.fibonacci_recursive(n-2)
+
+    def fibonacci_loop(self, n):
+        '''
+        print the nth fibonacci num with loop
+        :param n:
+        :return:
+        '''
+        if n < 0:
+            print "your input is error"
+            return
+        if n == 1:
+            return 1
+        if n == 0:
+            return 0
+        a, b = 0, 1
+        i = 2
+        while i <= n:
+            c = a + b
+            a,b = b, c
+            i += 1
+        return c
+
+    def num_of_one(self, n):
+        '''
+        count the num of one in num n
+        bin():convert the num to binary string
+        :param n: num n
+        :return: the num of one in n
+        '''
+        if n >= 0:
+            nbin = bin(n)
+            return nbin.count('1')
+        else:
+            n = abs(n)
+            nbin = bin(n-1)
+            return 32 - nbin.count('1')
 
 
-    def deleteHead(self):
-        '''
-        delete the element in the head of the queue
-        :return: noting
-        '''
-        if self.stackin.empty() and self.stackout.empty():
-            print "the queue is empty"
-            return
-        if not self.stackout.empty():
-            self.stackout.get()
-            return
-        while not self.stackin.empty():
-            self.stackout.put(self.stackin.get())
-        self.stackout.get()
+
+
+
+
+
 
 
 
@@ -227,12 +325,15 @@ if __name__ == "__main__":
         print queue.deleteHead()
     print codes.age_sort([232,4,3,54,765,42,-1,43,53,34,34,34,43,243,321,24,65,768,98,34,87,34,2,389,7])
     '''
-    for i in range(10):
-        list = [num for num in range(i)]
-        for j in range(i):
-            list = list[j:] + list[:j]
-            print list
-            print codes.find_min_of_rotated_list(list)
+    # for i in range(10):
+    #     list = [num for num in range(i)]
+    #     for j in range(i):
+    #         list = list[j:] + list[:j]
+    #         print list
+    #         print codes.find_min_of_rotated_list(list)
+    # print codes.find_min_rotated_list_loop([1,0,1,1,1])
+    # print codes.fibonacci_loop(100)
+    print codes.num_of_one(-1)
 
 
 
