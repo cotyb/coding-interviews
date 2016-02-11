@@ -291,8 +291,77 @@ class Codes():
             nbin = bin(n-1)
             return 32 - nbin.count('1')
 
+    def power(self, base, exponent):
+        '''
+        compuate the exponent power of base
+        :param base:
+        :param exponent:
+        :return: the power
+        '''
+        if self.equal(base, 0.0) and exponent < 0:
+            print "your input is invalid"
+            return
+        absexponent = abs(exponent)
+        result = self.compute_power_recursive(base, absexponent)
+        if exponent < 0:
+            result = 1.0 / result
+        return result
 
+    def compute_power_recursive(self, base, exponent):
+        '''
+        compute the power recursive
+        :param base:
+        :param exponent:
+        :return: the power
+        '''
+        if exponent == 1:
+            return base
+        if exponent == 0:
+            return 1
+        if exponent % 2 == 0:
+            tmp = self.power(base, exponent >> 1)
+            return tmp * tmp
+        if exponent % 2 == 1:
+            tmp = self.power(base, exponent >> 1)
+            return tmp * tmp * base
 
+    def equal(self, num1, num2):
+        if abs(num1 - num2 ) < 0.0000001:
+            return True
+        return False
+
+    def print_form_one_to_n(self, n):
+        num, i = 1, 0
+        while i < n:
+            num = num * 10
+            i += 1
+        for ele in range(1, num):
+            print ele
+
+    def print_1_to_max_of_n_digits(self, n):
+        if n < 0:
+            return
+        res = "0"
+        while len(res) <= n:
+            res = self.str_plus_one(res)
+            if res == -1:
+                print "error"
+                break
+            print res
+
+    def str_plus_one(self, str):
+        c = 0
+        res = ""
+        if str == "":
+            return "1"
+        if ord(str[-1]) < ord('0') and ord(str[-1]) > ord('9'):
+            print "error"
+            return -1
+        if ord(str[-1]) >= ord('0') and ord(str[-1]) < ord('9'):
+            return str[:-1] + chr(ord(str[-1]) + 1)
+        if ord(str[-1]) == ord('9'):
+            res = self.str_plus_one(str[:-1]) + "0"
+            return res
 
 
 
@@ -333,7 +402,11 @@ if __name__ == "__main__":
     #         print codes.find_min_of_rotated_list(list)
     # print codes.find_min_rotated_list_loop([1,0,1,1,1])
     # print codes.fibonacci_loop(100)
-    print codes.num_of_one(-1)
+    #print codes.num_of_one(-1)
+    #print codes.power(0,-1)
+    codes.print_1_to_max_of_n_digits(100)
+
+
 
 
 
