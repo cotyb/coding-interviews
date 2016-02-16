@@ -10,6 +10,7 @@ Change Activity: cotyb establish this file in 1/31 2016
 
 import time
 import Queue
+import gc
 
 
 class Queue_With_Two_Stacks():
@@ -341,13 +342,14 @@ class Codes():
     def print_1_to_max_of_n_digits(self, n):
         if n < 0:
             return
-        res = "0"
+        res = "1"
         while len(res) <= n:
+            print res
             res = self.str_plus_one(res)
             if res == -1:
                 print "error"
                 break
-            print res
+
 
     def str_plus_one(self, str):
         c = 0
@@ -363,6 +365,162 @@ class Codes():
             res = self.str_plus_one(str[:-1]) + "0"
             return res
 
+    def print_1_to_max_n_digits_recursive(self, n):
+        if n < 0:
+            return
+        if n == 0:
+            return ''
+        for i in range(10):
+            res = chr(ord('0') + i)
+            self.print_1_to_max_n_digits_recursively(res, 0, n)
+
+    def print_1_to_max_n_digits_recursively(self, res, n, length):
+        if n == length - 1:
+            print res.lstrip('0')
+            return
+        for i in range(10):
+            self.print_1_to_max_n_digits_recursively(res + chr(ord('0') + i), n+1, length)
+
+    def delete_node_of_list(self, head, delete):
+        if not head or not delete:
+            return
+        if delete.next != None:
+            next_node = delete.next
+            delete.val = next_node.val
+            delete.next = next_node.next
+        elif head == delete:
+            return -1
+        else:
+            tmp = head
+            while tmp.next != delete:
+                tmp = tmp.next
+            tmp.next = None
+
+    def odd_before_even(self, mixed_list):
+        if mixed_list == []:
+            return
+        index1 = 0
+        index2 = len(mixed_list) - 1
+        while index1 < index2:
+            while mixed_list[index2] & 0x1 != 1 and index1 < index2:
+                index2 -= 1
+            while mixed_list[index1] & 0x1 == 1 and index1 < index2:
+                index1 += 1
+            mixed_list[index1], mixed_list[index2] = mixed_list[index2], mixed_list[index1]
+        return mixed_list
+
+    def find_kth_to_tail(self, head, k):
+        if not head:
+            return None
+        if k <= 0:
+            return None
+        index1 = 1
+        res = head
+        tmp = head
+        while tmp.next and index1 < k:
+            tmp = tmp.next
+            index1 += 1
+        if index1 != k:
+            print "k is larger than the length of the list"
+            return
+        while tmp.next:
+            tmp = tmp.next
+            res = res.next
+        return res.val
+
+    #p112
+    def reverse_linkedlist(self, head):
+        if not head:
+            return
+        before_node = None
+        while head.next:
+            after_node = head.next
+            head.next = before_node
+            before_node = head
+            head = after_node
+        head.next = before_node
+        return head
+
+    #p114
+    def merge_sorted_linkedlist(self, head1, head2):
+        if not head1:
+            return head2
+        if not head2:
+            return head1
+        if head1.val <= head2.val:
+            head1.next = self.merge_sorted_linkedlist(head1.next, head2)
+            return head1
+        else:
+            head2.next = self.merge_sorted_linkedlist(head1, head2.next)
+            return head2
+
+    #p117
+    def has_sub_tree(self, root1, root2):
+        if not root2:
+            return True
+        if not root1:
+            return False
+        res = False
+        if root1.val == root2.val:
+            res = self.does_tree1_have_tree2(root1, root2)
+        if not res and root1.left:
+            res = self.has_sub_tree(root1.left, root2)
+        if not res and root1.right:
+            res = self.has_sub_tree(root2.right, root2)
+        return res
+
+    def does_tree1_have_tree2(self, root1, root2):
+        if not root2:
+            return True
+        if not root1:
+            return False
+        if root1.val != root2.val:
+            return False
+        return self.does_tree1_have_tree2(root1.left, root2.left) and self.does_tree1_have_tree2(root1.right, root2.right)
+
+    #p125
+    def mirror_binary_tree(self, root):
+        if not root:
+            return
+        if not root.left and not root.right:
+            return
+        root.left, root.right = root.right, root.left
+        self.mirror_binary_tree(root.right)
+        self.mirror_binary_tree(root.left)
+
+    #p127
+    def print_matrix_clockwise(self, matrix):
+        row = len(matrix)
+        col = len(matrix[0])
+        if row == 0 and col == 0:
+            return
+        start = 0
+        while row > 2 * start and col > 2 * start:
+            self.print_rec(matrix, row, col, start)
+            start += 1
+
+    def print_rec(self, matrix, row, col, start):
+        end_x = col - 1 - start
+        end_y = row - 1 - start
+        x = start
+        while x <= end_x:
+            print matrix[start][x]
+            x += 1
+        if start < end_y:
+            x = start + 1
+            while x <= end_y:
+                print matrix[x][end_x]
+                x += 1
+        if start < end_x and start < end_y:
+            x = end_x - 1
+            while start <= x:
+                print matrix[end_y][x]
+                x -= 1
+        if start < end_y - 1 and start < end_x:
+            x = end_y - 1
+            while start < x:
+                print matrix[x][start]
+                x -= 1
 
 
 
@@ -375,11 +533,11 @@ if __name__ == "__main__":
     st = time.time()
     #print codes.four_replace_space("we are happy")
     #codes.A1_insert2_A2([2,5,7,8,0,0,0,0,0,0],[1,3,4,23,56])
-    a = ListNode(1)
-    b = ListNode(2)
-    c = ListNode(3)
-    a.next = b
-    b.next = c
+    # a = ListNode(1)
+    # b = ListNode(2)
+    # c = ListNode(3)
+    # a.next = b
+    # b.next = c
     #codes.reversed_print_linked(a)
     #codes.reversed_link_recursion(a)
     #root = codes.reconstruct_binary_tree([1,2,4,7,3,5,6,8],[4,7,2,1,5,3,8,6])
@@ -404,7 +562,53 @@ if __name__ == "__main__":
     # print codes.fibonacci_loop(100)
     #print codes.num_of_one(-1)
     #print codes.power(0,-1)
-    codes.print_1_to_max_of_n_digits(100)
+    #codes.print_1_to_max_of_n_digits(3)
+    #codes.print_1_to_max_n_digits_recursive(3)
+    head1 = ListNode(1)
+    a = ListNode(3)
+    b = ListNode(5)
+    c = ListNode(7)
+    head2 = ListNode(1)
+    d = ListNode(4)
+    e = ListNode(6)
+    f = ListNode(8)
+    #head1.next = a
+    a.next = b
+    b.next = c
+    #head2.next = d
+    d.next = e
+    e.next = f
+
+    #print codes.find_kth_to_tail(head, 43)
+    # head = codes.merge_sorted_linkedlist(head1, head2)
+    # for i in range(2):
+    #     print head.val
+    #     head = head.next
+    # res = codes.delete_node_of_list(head, head)
+    # if res == -1:
+    #     head = None
+    #print codes.odd_before_even([2,1,12,21,2,321,312,3,213,21,3,213,12,3,12,3,21,3,24,3,5,6,65,767,8,678,8,7,90,89,6,7,4363,25,21,4,3])
+    root1 = BinaryTreeNode(8)
+    a = BinaryTreeNode(8)
+    b = BinaryTreeNode(7)
+    c = BinaryTreeNode(9)
+    d = BinaryTreeNode(2)
+    e = BinaryTreeNode(4)
+    f = BinaryTreeNode(7)
+    root2 = BinaryTreeNode(8)
+    g = BinaryTreeNode(9)
+    h = BinaryTreeNode(2)
+    root2.left = g
+    root2.right = h
+    root1.left = a
+    root1.right = b
+    a.left = c
+    a.right = d
+    d.left = e
+    d.right = f
+    #print codes.mirror_binary_tree(root1)
+    codes.print_matrix_clockwise([[1,2,3],[5,6,7],[8,9,10]])
+
 
 
 
