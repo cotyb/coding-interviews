@@ -61,11 +61,57 @@ class ListNode():
         self.next = None
 
 
+class ComplexListNode():
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+        self.sibling = None
+
+
 class BinaryTreeNode():
     def __init__(self, x):
         self.val = x
         self.left = None
         self.right = None
+
+
+class Min_Stack():
+    def __init__(self):
+        self.data_stack = Queue.LifoQueue()
+        self.min_stack = Queue.LifoQueue()
+
+    def min_get_min(self):
+        if not self.data_stack.empty() and not self.min_stack.empty():
+            return self.min_stack.get()
+
+    def min_push(self, x):
+        self.data_stack.put(x)
+        if self.min_stack.empty():
+            self.min_stack.put(x)
+        else:
+            now_min = self.min_stack.get()
+            self.min_stack.put(now_min)
+            if x <= now_min:
+                self.min_stack.put(x)
+            else:
+                self.min_stack.put(now_min)
+
+    def min_pop(self):
+        if not self.data_stack.empty() and not self.min_stack.empty():
+            self.min_stack.get()
+            return self.data_stack.get()
+
+
+# min_stack = Min_Stack()
+# min_stack.min_push(3)
+# min_stack.min_push(4)
+# min_stack.min_push(2)
+# min_stack.min_push(1)
+# min_stack.min_pop()
+# print min_stack.min_get_min()
+# print min_stack.min_get_min()
+# print min_stack.min_get_min()
+
 
 
 class Codes():
@@ -522,6 +568,91 @@ class Codes():
                 print matrix[x][start]
                 x -= 1
 
+    # p134
+    def is_list1_the_pop_order_of_list2(self, list1, list2):
+        if not list1 and not list2:
+            return True
+        elif not list1 or not list2:
+            return False
+        length1 = len(list1)
+        length2 = len(list2)
+        assert length1 == length2
+        stack1 = Queue.LifoQueue()
+        index1, index2 = 0, 0
+        res = False
+        while index2 < length2:
+            while stack1.empty() or self.pop_without_del(stack1) != list2[index2]:
+                if index1 == length1:
+                    break
+                stack1.put(list1[index1])
+                index1 += 1
+            if self.pop_without_del(stack1) != list2[index2]:
+                break
+            stack1.get()
+            index2 += 1
+
+        if stack1.empty() and index2 == length2:
+            res = True
+        return res
+
+    def pop_without_del(self, stack):
+        if stack.empty():
+            return
+        top = stack.get()
+        stack.put(top)
+        return top
+
+    # p137
+    def print_tree_from_top(self, root):
+        if not root:
+            return []
+        queue = Queue.Queue()
+        queue.put(root)
+        while not queue.empty():
+            node = queue.get()
+            if node.left:
+                queue.put(node.left)
+            if node.right:
+                queue.put(node.right)
+            print node.val
+
+    # p140
+    def is_postorder_of_search_tree(self, list):
+        if not list or len(list) == 1:
+            return True
+        root = list[-1]
+        left = []
+        right = []
+        index = 0
+        while list[index] < root:
+            left.append(list[index])
+            index += 1
+        right = list[index:-1]
+        for ele in right:
+            if ele < root:
+                return False
+        return self.is_postorder_of_search_tree(left) and self.is_postorder_of_search_tree(right)
+
+    # p143
+    def find_path(self, root, target):
+        if not root:
+            return None
+        result = []
+        self.find_path_recursive(root, target, [], result)
+        return result
+
+    def find_path_recursive(self, root, target, path, result):
+        if not root.right and not root.left and target == root.val:
+            path.append(root.val)
+            result.append(path)
+        if root.left:
+            self.find_path_recursive(root.left, target-root.val, path+[root.val], result)
+        if root.right:
+            self.find_path_recursive(root.right, target-root.val, path+[root.val], result)
+        return result
+
+    # p147
+    def complex_linkedlist_clone(self, head):
 
 
 
@@ -590,11 +721,11 @@ if __name__ == "__main__":
     #print codes.odd_before_even([2,1,12,21,2,321,312,3,213,21,3,213,12,3,12,3,21,3,24,3,5,6,65,767,8,678,8,7,90,89,6,7,4363,25,21,4,3])
     root1 = BinaryTreeNode(8)
     a = BinaryTreeNode(8)
-    b = BinaryTreeNode(7)
+    b = BinaryTreeNode(14)
     c = BinaryTreeNode(9)
     d = BinaryTreeNode(2)
     e = BinaryTreeNode(4)
-    f = BinaryTreeNode(7)
+    f = BinaryTreeNode(14)
     root2 = BinaryTreeNode(8)
     g = BinaryTreeNode(9)
     h = BinaryTreeNode(2)
@@ -607,7 +738,11 @@ if __name__ == "__main__":
     d.left = e
     d.right = f
     #print codes.mirror_binary_tree(root1)
-    codes.print_matrix_clockwise([[1,2,3],[5,6,7],[8,9,10]])
+    #codes.print_matrix_clockwise([[1,2,3],[5,6,7],[8,9,10]])
+    # print codes.is_list1_the_pop_order_of_list2([3],[3])
+    # codes.print_tree_from_top(root1)
+    # print codes.is_postorder_of_search_tree([50,7,6,9,11,10,8])
+    print codes.find_path(root1, 22)
 
 
 
