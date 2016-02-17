@@ -11,6 +11,7 @@ Change Activity: cotyb establish this file in 1/31 2016
 import time
 import Queue
 import gc
+import copy
 
 
 class Queue_With_Two_Stacks():
@@ -60,6 +61,12 @@ class ListNode():
         self.val = x
         self.next = None
 
+
+class DoubleListNode():
+    def __init__(self, x):
+        self.val = x
+        self.prior = None
+        self.next = None
 
 class ComplexListNode():
     def __init__(self, x):
@@ -653,6 +660,91 @@ class Codes():
 
     # p147
     def complex_linkedlist_clone(self, head):
+        '''
+        three steps:
+        first: copy every node and bind them
+        second: sibling
+        third: divide the linked list into two
+        '''
+        head = self.clone_nodes(head)
+        head = self.connect_sibling_nodes(head)
+        clone_head = self.reconnect_nodes(head)
+        return head, clone_head
+
+
+    def clone_nodes(self, head):
+        res = head
+        if not head:
+            return None
+        while head.next:
+            tmp = ComplexListNode(head.val)
+            tmp.next = head.next
+            head.next = tmp
+            head = tmp.next
+        tmp = ComplexListNode(head.val)
+        head.next = tmp
+        return res
+
+    def connect_sibling_nodes(self, head):
+        if not head:
+            return None
+        res = head
+        while head:
+            if head.sibling:
+                head.next.sibling = head.sibling.next
+            head = head.next.next
+        return res
+
+    def reconnect_nodes(self, head):
+        if not head:
+            return None
+        clone_head = head.next
+        clone_result = clone_head
+        head.next = clone_head.next
+        head = head.next
+        while head:
+            clone_head.next = head.next
+            clone_head = clone_head.next
+            head.next = clone_head.next
+            head = head.next
+        return clone_result
+
+    # p151
+    def covert_binary_tree2linkedlist(self, root):
+        if not root:
+            return None
+        last_node = [None]
+        self.covert(root, last_node)
+        head = last_node[0]
+        while head.left:
+            head = head.left
+        return head
+
+
+    def covert(self, root, last_node):
+        if not root:
+            return
+        current = root
+        if root.left:
+            self.covert(root.left, last_node)
+        current.left = last_node[0]
+        if last_node[0]:
+            last_node[0].right = current
+        last_node[0] = current
+        if root.right:
+            self.covert(root.right, last_node)
+
+    # p154 28
+    def permutation(self, str):
+        res = []
+        if len(str) <= 1:
+            return str
+        for i in range(len(str)):
+            tmp = str[:i] + str[i+1:]
+            for ele in self.permutation(tmp):
+                res.append(str[i]+ele)
+
+        return res
 
 
 
@@ -703,10 +795,10 @@ if __name__ == "__main__":
     d = ListNode(4)
     e = ListNode(6)
     f = ListNode(8)
-    #head1.next = a
+    head1.next = a
     a.next = b
     b.next = c
-    #head2.next = d
+    head2.next = d
     d.next = e
     e.next = f
 
@@ -719,13 +811,13 @@ if __name__ == "__main__":
     # if res == -1:
     #     head = None
     #print codes.odd_before_even([2,1,12,21,2,321,312,3,213,21,3,213,12,3,12,3,21,3,24,3,5,6,65,767,8,678,8,7,90,89,6,7,4363,25,21,4,3])
-    root1 = BinaryTreeNode(8)
-    a = BinaryTreeNode(8)
+    root1 = BinaryTreeNode(10)
+    a = BinaryTreeNode(6)
     b = BinaryTreeNode(14)
-    c = BinaryTreeNode(9)
-    d = BinaryTreeNode(2)
-    e = BinaryTreeNode(4)
-    f = BinaryTreeNode(14)
+    c = BinaryTreeNode(4)
+    d = BinaryTreeNode(8)
+    e = BinaryTreeNode(12)
+    f = BinaryTreeNode(16)
     root2 = BinaryTreeNode(8)
     g = BinaryTreeNode(9)
     h = BinaryTreeNode(2)
@@ -735,14 +827,30 @@ if __name__ == "__main__":
     root1.right = b
     a.left = c
     a.right = d
-    d.left = e
-    d.right = f
+    b.left = e
+    b.right = f
+    a = ComplexListNode(1)
+    b = ComplexListNode(2)
+    c = ComplexListNode(3)
+    d = ComplexListNode(4)
+    e = ComplexListNode(5)
+    a.next = b
+    b.next = c
+    c.next = d
+    d.next = e
+    a.sibling = c
+    b.sibling = e
+    d.sibling = b
     #print codes.mirror_binary_tree(root1)
     #codes.print_matrix_clockwise([[1,2,3],[5,6,7],[8,9,10]])
     # print codes.is_list1_the_pop_order_of_list2([3],[3])
     # codes.print_tree_from_top(root1)
     # print codes.is_postorder_of_search_tree([50,7,6,9,11,10,8])
-    print codes.find_path(root1, 22)
+    # print codes.find_path(root1, 22)
+    # head, clone_head = codes.complex_linkedlist_clone(a)
+    # head1 = head1.next
+    # head = codes.covert_binary_tree2linkedlist(root1)
+    print codes.permutation("abc")
 
 
 
