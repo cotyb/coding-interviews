@@ -12,6 +12,7 @@ import time
 import Queue
 import gc
 import copy
+import heapq
 
 
 class Queue_With_Two_Stacks():
@@ -746,6 +747,117 @@ class Codes():
 
         return res
 
+    # p163 29
+    def more_than_half_num_simple(self, alist):
+        if not alist:
+            return
+        cnt = 0
+        current = alist[0]
+        for ele in alist[1:]:
+            if ele == current:
+                cnt += 1
+            else:
+                if cnt != 0:
+                    cnt -= 1
+                else:
+                    current = ele
+        if alist.count(current) > len(alist) / 2:
+            return current
+
+    def more_than_half_num_recursive(self, alist):
+        if not alist:
+            return
+        length = len(alist)
+        start = 0
+        end = length - 1
+        mid = length / 2
+        index = self.partition_quick(alist, length, start, end)
+        while index != mid:
+            if index > mid:
+                end = index - 1
+                index = self.partition_quick(alist, length, start, end)
+            else:
+                start = index + 1
+                index = self.partition_quick(alist, length, start, end)
+        if alist.count(alist[mid]) > length / 2:
+            return alist[mid]
+
+    def partition_quick(self, alist, length, start, end):
+        base = alist[start]
+        #index = 0
+        index1, index2 = start, end
+        while index1 < index2:
+            while index1 < index2 and alist[index2] >= base:
+                index2 -= 1
+            alist[index1] = alist[index2]
+            while index1 < index2 and alist[index1] <= base:
+                index1 += 1
+            alist[index2] = alist[index1]
+        alist[index1] = base
+        return index1
+
+    # p167 30
+    def get_least_numbers(self, alist, k):
+        if not alist or k <= 0:
+            return
+        length = len(alist)
+        if k > length:
+            return
+        start, end = 0, length - 1
+        index = self.partition_quick(alist, length, start, end)
+        while k != index:
+            if index > k:
+                end = index - 1
+                index = self.partition_quick(alist, length, start, end)
+            else:
+                start = index + 1
+                index = self.partition_quick(alist, length, start, end)
+        return alist[:index]
+
+    def get_least_numbers_big_data(self, alist, k):
+        max_heap = []
+        length = len(alist)
+        if not alist or k <= 0 or k > length:
+            return
+        k = k - 1
+        for ele in alist:
+            ele = -ele
+            if len(max_heap) <= k:
+                heapq.heappush(max_heap, ele)
+            else:
+                heapq.heappushpop(max_heap, ele)
+
+        return map(lambda x:-x, max_heap)
+
+    # p171 31
+    def find_great_sum_of_subarray(self, alist):
+        length = len(alist)
+        max_sum = alist[0]
+        if not alist:
+            return
+        tmp_sum = 0
+        for ele in alist:
+            if tmp_sum <= 0:
+                tmp_sum = ele
+            else:
+                tmp_sum += ele
+            if tmp_sum > max_sum:
+                max_sum = tmp_sum
+
+
+        return max_sum
+
+    # p174 32
+    def number_of_1_between_1_and_n(self, n):
+        if n <= 0:
+            return 0
+        num_str = str(n)
+        length = len(num_str)
+        first = num_str[0]
+        if length == 0 and first == '0':
+            return 0
+        if length == 0 and first > '0':
+            return
 
 
 
@@ -850,7 +962,10 @@ if __name__ == "__main__":
     # head, clone_head = codes.complex_linkedlist_clone(a)
     # head1 = head1.next
     # head = codes.covert_binary_tree2linkedlist(root1)
-    print codes.permutation("abc")
+    # print codes.permutation("abc")
+    #print codes.more_than_half_num_simple([2,2,2,2,1,2,4,2,1,1,2,1])
+    #print codes.get_least_numbers_big_data([4,5,1,6,2,7,3,8], 9)
+    print codes.find_great_sum_of_subarray([-1,-2,-3,-10,-4,-7,-2,-5,-22])
 
 
 
