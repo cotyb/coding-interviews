@@ -853,11 +853,75 @@ class Codes():
             return 0
         num_str = str(n)
         length = len(num_str)
-        first = num_str[0]
-        if length == 0 and first == '0':
+        return self.number_of_1(num_str, length)
+
+    def number_of_1(self, string, length):
+        if not string:
             return 0
-        if length == 0 and first > '0':
-            return
+        first = string[0]
+        if length == 1 and first == '0':
+            return 0
+        if length == 1 and first > '0':
+            return 1
+        numfisrtdigit = 0
+        first = ord(first) - ord('0')
+        if first > 1:
+            numfisrtdigit = pow(10, length - 1)
+        elif first == 1:
+            numfisrtdigit = int(string[1:]) + 1
+
+        numotherdigits = first * (length - 1) * pow(10, length - 2)
+        numrecursive = self.number_of_1(string[1:], length - 1)
+
+        return numfisrtdigit + numotherdigits + numrecursive
+
+    # p177 33
+    def get_min_number(num_list):
+        pass
+
+    # p182 34
+    def ugly_num(self, n):
+        if n < 1:
+            return 0
+        index = 0
+        num = 0
+        while index < n:
+            num += 1
+            if self.is_ugly_num(num):
+                index += 1
+        return num
+
+    def is_ugly_num(self, num):
+        while num % 2 == 0:
+            num /= 2
+        while num % 3 == 0:
+            num /= 3
+        while num % 5 == 0:
+            num /= 5
+        if num == 1:
+            return True
+        return False
+
+    def ugly_replace_time_with_space(self, n):
+        result = [1]
+        if n < 1:
+            return 0
+        index_2 = 0
+        index_3 = 0
+        index_5 = 0
+        while len(result) < n:
+            result.append(min(result[index_2] * 2, result[index_3] * 3, result[index_5] * 5))
+            while result[index_2] * 2 <= result[-1]:
+                index_2 += 1
+            while result[index_3] * 3 * 3 <= result[-1]:
+                index_3 += 1
+            while result[index_5] * 5 <= result[-1]:
+                index_5 += 1
+        return result[-1]
+
+
+
+
 
 
 
@@ -965,7 +1029,10 @@ if __name__ == "__main__":
     # print codes.permutation("abc")
     #print codes.more_than_half_num_simple([2,2,2,2,1,2,4,2,1,1,2,1])
     #print codes.get_least_numbers_big_data([4,5,1,6,2,7,3,8], 9)
-    print codes.find_great_sum_of_subarray([-1,-2,-3,-10,-4,-7,-2,-5,-22])
+    #print codes.find_great_sum_of_subarray([-1,-2,-3,-10,-4,-7,-2,-5,-22])
+    #print codes.number_of_1_between_1_and_n()
+    #print codes.ugly_num(1500)
+    print codes.ugly_replace_time_with_space(1500)
 
 
 
