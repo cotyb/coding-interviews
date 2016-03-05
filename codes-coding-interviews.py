@@ -913,7 +913,7 @@ class Codes():
             result.append(min(result[index_2] * 2, result[index_3] * 3, result[index_5] * 5))
             while result[index_2] * 2 <= result[-1]:
                 index_2 += 1
-            while result[index_3] * 3 * 3 <= result[-1]:
+            while result[index_3] * 3 <= result[-1]:
                 index_3 += 1
             while result[index_5] * 5 <= result[-1]:
                 index_5 += 1
